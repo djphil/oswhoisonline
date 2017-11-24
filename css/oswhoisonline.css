@@ -1,0 +1,60 @@
+/* CSS v0.1 by djphil (CC-BY-NC-SA 4.0) */
+
+html {position: relative; min-height: 100%;}
+body {padding-top: 50px; margin-bottom: 60px;}
+.text-muted {margin: 20px 0px 0px 0px;}
+.clearfix {clear: both;}
+
+/**/
+.input-group > .btn {
+	min-width: 50px;
+	margin-left: -1px;
+}
+
+.btn-group.btn-group-yesno {
+	width: 220px;
+	max-width: 100%;
+}
+
+.btn-group.btn-group-yesno > .btn {
+	width: 50%;
+	min-width: 40px;
+	padding: 2px 0px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0px;
+    height: 60px;
+    background-color: #F5F5F5;
+}
+
+@keyframes fadein {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.content {
+    animation: fadein 0.5s;
+}
+
+/* Animated Loading */
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
+@keyframes fadein {
+   from {opacity: 0;}
+   to {opacity: 1;}
+}
