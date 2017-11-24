@@ -1,5 +1,6 @@
 /* CSS v0.1 by djphil (CC-BY-NC-SA 4.0) */
-
+@charset "utf-8";
+* {margin:0px; padding:0px;}
 html {position: relative; min-height: 100%;}
 body {padding-top: 50px; margin-bottom: 60px;}
 .text-muted {margin: 20px 0px 0px 0px;}

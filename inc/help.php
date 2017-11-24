@@ -4,14 +4,16 @@
     </article>
 
     <article>
-        Welcome to <?php echo $title." ".$version; ?>
+        Welcome to <?php echo $title." v".$version; ?>
     </article>
 
     <article>
         <h2>Features</h2>
-        Avatar names list<br />
-        Teleport buttons<br />
-        user settings to allow/disallow
+        Avatar names list <i class="glyphicon glyphicon-ok text-success"></i><br />
+        Teleport buttons <i class="glyphicon glyphicon-ok text-success"></i><br />
+        Display my avatar (yes/no) <i class="glyphicon glyphicon-ok text-success"></i><br />
+        For friends only (yes/no) <i class="glyphicon glyphicon-ok text-success"></i><br />
+        More coming ...
     </article>
 
     <article>
@@ -21,7 +23,7 @@
 
     <article>
         <h2>Download</h2>
-        <a class="btn btn-default btn-success btn-xs" href="https://github.com/djphil/oswhoisonline" target="_blank">
+        <a class="btn btn-default btn-success btn-xs" href="<?php echo $github_url; ?>" target="_blank">
         <i class="glyphicon glyphicon-save"></i> GithHub</a> Source Code
     </article>
 

@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="<?php echo $title." ".$version; ?>">
+    <meta name="description" content="<?php echo $title." v".$version; ?>">
     <meta name="author" content="Philippe Lemaire (djphil)">
     <link rel="icon" href="img/favicon.ico">
     <link rel="author" href="inc/humans.txt" />
 
-    <title><?php echo $title." ".$version; ?></title>
+    <title><?php echo $title." v".$version; ?></title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -22,8 +22,11 @@
     <?php if ($useTheme === TRUE): ?>
         <link href="css/bootstrap-theme.min.css" rel="stylesheet">
     <?php endif ?>
+    
+    <?php if ($display_ribbon === TRUE): ?>
+        <link href="css/gh-fork-ribbon.min.css" rel="stylesheet">
+    <?php endif ?>
 
-    <link href="css/gh-fork-ribbon.min.css" rel="stylesheet">
     <link href="css/oswhoisonline.css" rel="stylesheet">
     <link href="css/login.css" rel="stylesheet">
 
@@ -40,9 +43,12 @@
 
 <body>
     <div class="container">
-        <div class="github-fork-ribbon-wrapper left">
-            <div class="github-fork-ribbon">
-                <a href="https://github.com/djphil/oswhoisonline" target="_blank">Fork me on GitHub</a>
+        <?php if ($display_ribbon === TRUE): ?>
+            <div class="github-fork-ribbon-wrapper left">
+                <div class="github-fork-ribbon">
+                    <a href="<?php echo $github_url; ?>" target="_blank">Fork me on GitHub</a>
+                </div>
             </div>
-        </div>
+        <?php endif ?>
+
         <div class="row">

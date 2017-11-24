@@ -4,7 +4,7 @@ header('Content-Type: text/html; charset=utf-8');
 ini_set('magic_quotes_gpc', 0);
 
 $title = "OpenSim Whois Online";
-$version = "v0.1";
+$version = "v0.2";
 $debug = FALSE;
 
 $dbhost = "localhost";
@@ -17,6 +17,19 @@ $tbmodu = "oswhoisonline_settings";
 /* SIMULATOR CONFIG */
 $robustHOST = "domain.com";
 $robustPORT = 8002;
+
+/* MODULE CONFIG */
+$friends_only = TRUE;
+
+$admins = [
+    "29736bb5-063f-4c77-b408-e592d884b019",
+    "",
+    ""
+];
+
+/* RIBBON CONFIG */
+$display_ribbon = TRUE;
+$github_url = "https://github.com/djphil/oswhoisonline";
 
 /* STYLE CONFIG */
 $useTheme = TRUE;
