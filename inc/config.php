@@ -25,7 +25,7 @@ $admins = array(
     ""
 );
 
-/* DIAPLY CONFIG */
+/* DISPLAY CONFIG */
 $friends_only = TRUE;
 $region_name = TRUE;
 $last_seen = TRUE;
