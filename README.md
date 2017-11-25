@@ -1,4 +1,4 @@
-# oswhoisonline v0.1
+# oswhoisonline v0.2
 OpenSim Whois Online v0.2 by djphil (CC-BY-NC-SA 4.0)
 
 ## Help
