@@ -4,7 +4,7 @@ header('Content-Type: text/html; charset=utf-8');
 ini_set('magic_quotes_gpc', 0);
 
 $title = "OpenSim Whois Online";
-$version = "v0.2";
+$version = "0.2";
 $debug = FALSE;
 
 $dbhost = "localhost";
@@ -18,14 +18,21 @@ $tbmodu = "oswhoisonline_settings";
 $robustHOST = "domain.com";
 $robustPORT = 8002;
 
-/* MODULE CONFIG */
-$friends_only = TRUE;
-
-$admins = [
-    "29736bb5-063f-4c77-b408-e592d884b019",
+/* ADMINISTRATOR UUID'S (see all) */
+$admins = array(
+    "<ADMIN_UUID>",
     "",
     ""
-];
+);
+
+/* DIAPLY CONFIG */
+$friends_only = TRUE;
+$region_name = TRUE;
+$last_seen = TRUE;
+$tp_local = TRUE;
+$tp_hg = TRUE;
+$tp_hgv3 = TRUE;
+$tp_hop = TRUE;
 
 /* RIBBON CONFIG */
 $display_ribbon = TRUE;

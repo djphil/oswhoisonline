@@ -44,12 +44,11 @@ if (isset($_POST['search']))
 <?php
 if (isset($_SESSION['valid']))
 {
-    $user_uuid = $_SESSION['useruuid'];
-    $visible = get_visibility($db, $tbmodu, $user_uuid);
-    $friends_only = get_friends_only($db, $tbmodu, $user_uuid);
-    unset($user_uuid);
+    $my_uuid = $_SESSION['useruuid'];
+    $my_visibility = get_visibility($db, $tbmodu, $my_uuid);
+    $my_friends_only = get_friends_only($db, $tbmodu, $my_uuid);
 
-    if ($visible == "" || $friends_only == "")
+    if ($my_visibility == "" || $my_friends_only == "")
     {
         echo '<div class="alert alert-info alert-">';
         echo '<i class="glyphicon glyphicon-info-sign"></i> ';
@@ -68,15 +67,19 @@ if (isset($_SESSION['valid']))
 
     if ($counter > 0)
     {
+        $tp_hide = FALSE;
+        if ($tp_local === FALSE && $tp_hg === FALSE && $tp_hgv3 === FALSE && $tp_hop === FALSE) {$tp_hide = TRUE;}
+        $options = array($region_name, $last_seen, $tp_local, $tp_hg, $tp_hgv3, $tp_hop, $tp_hide);
+
         echo '<div class="table-responsive">';
         echo '<table class="table table-hover">';
         echo '<thead>';
         echo '<tr>';
         echo '<th>#</th>';
         echo '<th>Avatar</th>';
-        echo '<th>Region</th>';
-        echo '<th>Last Seen</th>';
-        echo '<th class="text-right">Teleports</th>';
+        if ($region_name === TRUE) echo '<th>Region</th>';
+        if ($last_seen === TRUE) echo '<th>Last Seen</th>';
+        if ($tp_hide === FALSE) echo '<th class="text-right">Teleports</th>';
         echo '</tr>';
         echo '</thead>';
         echo '<tbody>';
@@ -85,102 +88,54 @@ if (isset($_SESSION['valid']))
 
         while ($row = $query->fetch(PDO::FETCH_ASSOC))
         {
+            ++$i;
+
             $UserID = $row['UserID'];
             $RegionID = $row['RegionID'];
             $LastSeen = $row['LastSeen'];
 
-            $visibility = get_visibility($db, $tbmodu, $UserID);
+            $user_visibility = get_visibility($db, $tbmodu, $UserID);
+            $user_friends_only = get_friends_only($db, $tbmodu, $UserID);
 
-            if ($visibility == "yes") // return;
+            // FOR ME ONLY
+            if ($UserID == $my_uuid)
             {
-                $orderby = 'regionName';
-                
-                $sql = $db->prepare("
-                    SELECT regionName
-                    FROM regions
-                    WHERE uuid = '".$RegionID."'
-                    ORDER BY regionName
-                ");
-
-                $sql->execute();
-                $counter = $sql->rowCount();
-
-                while ($region = $sql->fetch(PDO::FETCH_ASSOC))
+                if ($my_visibility == "yes")
                 {
-                    $regionName = $region['regionName'];
+                    $regionName = get_region_name($db, $RegionID);
+                    $username = get_user_name($db, $UserID);
+
+                    get_this_user($i, $username, $LastSeen, $regionName, $robustHOST, $robustPORT, $options);
                 }
+            }
 
-                $sql = $db->prepare("
-                    SELECT FirstName, LastName
-                    FROM useraccounts
-                    WHERE PrincipalID = '".$UserID."'
-                ");
+            // FOR ALL OTHERS
+            else
+            {
+                $user_visibility = get_visibility($db, $tbmodu, $UserID);
+                $user_friends_only = get_friends_only($db, $tbmodu, $UserID);
+                $regionName = get_region_name($db, $RegionID);
+                $username = get_user_name($db, $UserID);
 
-                $sql->execute();           
-                $counter = $sql->rowCount();
-
-                if ($counter > 0)
+                if ($user_visibility == "yes")
                 {
-                    while ($rows = $sql->fetch(PDO::FETCH_ASSOC))
+                    if ($user_friends_only == "yes")
                     {
-                        $firstname = $rows['FirstName'];
-                        $lastname = $rows['LastName'];
-
-                        if (!empty($firstname) && !empty($lastname))
-                        $username = $firstname.' '.$lastname;
-                        else $username = 'Username Missing';
-
-                        if ($friends_only == "yes" && is_friends($db, $tbmodu, $UserID) <> 0)
+                        if (is_friends($db, $tbmodu, $UserID))
                         {
-                            echo '<tr>';
-                            echo '<td><span class="badge">'.++$i.'</span></td>';
-                            echo '<td><span class="glyphicon glyphicon-user"></span> '.$username.'</td>';
-                            echo '<td>'.$regionName.'</td>';
-                            echo '<td>'.$LastSeen.'</td>';
-                            echo '<td class="text-right">';
-                            echo '<a class="btn btn-primary btn-xs" href="secondlife://'.$regionName.'/128/128/128">';
-                            echo '<i class="glyphicon glyphicon-plane"></i> Local</a> ';
-                            echo '<a class="btn btn-info btn-xs" href="secondlife://'.$robustHOST.':'.$robustPORT.'/'.$regionName.'/128/128/128">';
-                            echo '<i class="glyphicon glyphicon-plane"></i> HG</a> ';
-                            echo '<a class="btn btn-warning btn-xs" href="secondlife://http|!!'.$robustHOST.'|'.$robustPORT.'+'.$regionName.'">';
-                            echo '<i class="glyphicon glyphicon-plane"></i> HG V3</a> ';
-                            echo '<a class="btn btn-danger btn-xs" href="hop://'.$robustHOST.':'.$robustPORT.'/'.$regionName.'/128/128/128">';
-                            echo '<i class="glyphicon glyphicon-plane"></i> Hop</a> ';
-                            echo '</td>';
-                            echo '</tr>';
-                        }
-
-                        else if ($friends_only == "no" && in_array($_SESSION['useruuid'], $admins))
-                        {
-                            echo '<tr>';
-                            echo '<td><span class="badge">'.++$i.'</span></td>';
-                            echo '<td><span class="glyphicon glyphicon-user"></span> '.$username.'</td>';
-                            echo '<td>'.$regionName.'</td>';
-                            echo '<td>'.$LastSeen.'</td>';
-                            echo '<td class="text-right">';
-                            echo '<a class="btn btn-primary btn-xs" href="secondlife://'.$regionName.'/128/128/128">';
-                            echo '<i class="glyphicon glyphicon-plane"></i> Local</a> ';
-                            echo '<a class="btn btn-info btn-xs" href="secondlife://'.$robustHOST.':'.$robustPORT.'/'.$regionName.'/128/128/128">';
-                            echo '<i class="glyphicon glyphicon-plane"></i> HG</a> ';
-                            echo '<a class="btn btn-warning btn-xs" href="secondlife://http|!!'.$robustHOST.'|'.$robustPORT.'+'.$regionName.'">';
-                            echo '<i class="glyphicon glyphicon-plane"></i> HG V3</a> ';
-                            echo '<a class="btn btn-danger btn-xs" href="hop://'.$robustHOST.':'.$robustPORT.'/'.$regionName.'/128/128/128">';
-                            echo '<i class="glyphicon glyphicon-plane"></i> Hop</a> ';
-                            echo '</td>';
-                            echo '</tr>';
+                           get_this_user($i, $username, $LastSeen, $regionName, $robustHOST, $robustPORT, $options);
                         }
                     }
 
-                    unset($folderName);
-                    unset($folderID);
-                    unset($parentFolderID);
+                    else
+                    {
+                        get_this_user($i, $username, $LastSeen, $regionName, $robustHOST, $robustPORT, $options);
+                    }
                 }
 
-                else
+                else if (in_array($my_uuid, $admins))
                 {
-                    echo '<div class="alert alert-danger alert-anim">Username no found ...';
-                    echo '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>';
-                    echo '</div>';
+                    get_this_user($i, $username, $LastSeen, $regionName, $robustHOST, $robustPORT, $options);
                 }
             }
         }
@@ -188,8 +143,6 @@ if (isset($_SESSION['valid']))
         echo '</tbody>';
         echo '</table>';
         echo '</div>';
-
-        $sql = null;
     }
 
     else
@@ -199,7 +152,13 @@ if (isset($_SESSION['valid']))
         echo '</div>';
     }
 
-    $query = null;
+    unset($my_uuid);
+    unset($my_visibility);
+    unset($my_friends_only);
+    unset($user_visibility);
+    unset($user_friends_only);  
     unset($counter);
+    $query = null;
+    $db = null;
 }
 ?>

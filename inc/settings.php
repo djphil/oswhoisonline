@@ -3,100 +3,105 @@
 </article>
 
 <?php
-/* VISIBILITY */
-if (!empty($_POST['display_on_website']))
+if (isset($_SESSION['valid']))
 {
-    $user_uuid = $_SESSION['useruuid'];
-    $visible = $_POST['display_on_website'];
-    
-    set_visibility($db, $tbmodu, $user_uuid, $visible);
-
-    if ($visible == "no")
+    /* VISIBILITY */
+    if (!empty($_POST['display_on_website']))
     {
-        $visible_yes = "btn btn-default";
-        $visible_no = "btn btn-danger active";
+        $user_uuid = $_SESSION['useruuid'];
+        $visible = $_POST['display_on_website'];
+        
+        set_visibility($db, $tbmodu, $user_uuid, $visible);
+
+        if ($visible == "no")
+        {
+            $visible_yes = "btn btn-default";
+            $visible_no = "btn btn-danger active";
+        }
+
+        else if ($visible == "yes")
+        {
+            $visible_yes = "btn btn-success active";
+            $visible_no = "btn btn-default";
+        }
     }
 
-    else if ($visible == "yes")
+    else if (empty($_POST['display_on_website']))
     {
-        $visible_yes = "btn btn-success active";
-        $visible_no = "btn btn-default";
+        $user_uuid = $_SESSION['useruuid'];
+        $visible = get_visibility($db, $tbmodu, $user_uuid);
+
+        if ($visible == "no")
+        {
+            $visible_yes = "btn btn-default";
+            $visible_no = "btn btn-danger active";
+        }
+
+        else if ($visible == "yes")
+        {
+            $visible_yes = "btn btn-success active";
+            $visible_no = "btn btn-default";
+        }
+
+        else if ($visible == "" || $visible <> "yes" || $visible <> "no")
+        {
+            $visible_yes = "btn btn-default";
+            $visible_no = "btn btn-default ";
+        }
+    }
+
+    /* FRIENDS ONLY */
+    if (!empty($_POST['display_friends_only']))
+    {
+        $user_uuid = $_SESSION['useruuid'];
+        $friends_only = $_POST['display_friends_only'];
+        
+        set_friends_only($db, $tbmodu, $user_uuid, $friends_only);
+
+        if ($friends_only == "no")
+        {
+            $friends_only_yes = "btn btn-default";
+            $friends_only_no = "btn btn-danger active";
+        }
+
+        else if ($friends_only == "yes")
+        {
+            $friends_only_yes = "btn btn-success active";
+            $friends_only_no = "btn btn-default";
+        }
+    }
+
+    else if (empty($_POST['display_friends_only']))
+    {
+        $user_uuid = $_SESSION['useruuid'];
+        $friends_only = get_friends_only($db, $tbmodu, $user_uuid);
+
+        if ($friends_only == "no")
+        {
+            $friends_only_yes = "btn btn-default";
+            $friends_only_no = "btn btn-danger active";
+        }
+
+        else if ($friends_only == "yes") 
+        {
+            $friends_only_yes = "btn btn-success active";
+            $friends_only_no = "btn btn-default";
+        }
+
+        else if ($friends_only == "" || $friends_only <> "yes" || $friends_only <> "no")
+        {
+            $friends_only_yes = "btn btn-default";
+            $friends_only_no = "btn btn-default ";
+        }
+    }
+
+    if ($_POST)
+    {
+        $_SESSION['flash']['success'] = "Update succefully ...";
     }
 }
+else {;}
 
-else if (empty($_POST['display_on_website']))
-{
-    $user_uuid = $_SESSION['useruuid'];
-    $visible = get_visibility($db, $tbmodu, $user_uuid);
-
-    if ($visible == "no")
-    {
-        $visible_yes = "btn btn-default";
-        $visible_no = "btn btn-danger active";
-    }
-
-    else if ($visible == "yes")
-    {
-        $visible_yes = "btn btn-success active";
-        $visible_no = "btn btn-default";
-    }
-
-    else if ($visible == "" || $visible <> "yes" || $visible <> "no")
-    {
-        $visible_yes = "btn btn-default";
-        $visible_no = "btn btn-default ";
-    }
-}
-
-/* FRIENDS ONLY */
-if (!empty($_POST['display_friends_only']))
-{
-    $user_uuid = $_SESSION['useruuid'];
-    $friends_only = $_POST['display_friends_only'];
-    
-    set_friends_only($db, $tbmodu, $user_uuid, $friends_only);
-
-    if ($friends_only == "no")
-    {
-        $friends_only_yes = "btn btn-default";
-        $friends_only_no = "btn btn-danger active";
-    }
-
-    else if ($friends_only == "yes")
-    {
-        $friends_only_yes = "btn btn-success active";
-        $friends_only_no = "btn btn-default";
-    }
-}
-
-else if (empty($_POST['display_friends_only']))
-{
-    $user_uuid = $_SESSION['useruuid'];
-    $friends_only = get_friends_only($db, $tbmodu, $user_uuid);
-
-    if ($friends_only == "no")
-    {
-        $friends_only_yes = "btn btn-default";
-        $friends_only_no = "btn btn-danger active";
-    }
-
-    else if ($friends_only == "yes") 
-    {
-        $friends_only_yes = "btn btn-success active";
-        $friends_only_no = "btn btn-default";
-    }
-
-    else if ($friends_only == "" || $friends_only <> "yes" || $friends_only <> "no")
-    {
-        $friends_only_yes = "btn btn-default";
-        $friends_only_no = "btn btn-default ";
-    }
-}
-
-if ($_POST)
-{
-    $_SESSION['flash']['success'] = "Update succefully ...";
-}
 ?>
 
 <!-- Fash Message -->

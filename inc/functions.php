@@ -215,37 +215,150 @@ function is_friends($db, $tbmodu, $user_uuid)
 {
     $query = $db->prepare("
         SELECT * 
-        FROM $tbmodu 
-        WHERE user_uuid = ?
-        AND visible = ?
-        AND friends = ?
+        FROM friends 
+        WHERE PrincipalID = ?
+        AND Friend = ?
+        AND Offered = 0
     ");
 
-    $query->bindValue(1, $_SESSION['useruuid'], PDO::PARAM_STR);
-    $query->bindValue(2, "yes", PDO::PARAM_STR);
-    $query->bindValue(3, "yes", PDO::PARAM_STR);
+    $query->bindValue(1, $user_uuid , PDO::PARAM_STR);
+    $query->bindValue(2, $_SESSION['useruuid'] , PDO::PARAM_STR);
     $query->execute();
 
     $counter = $query->rowCount();
 
-    if ($counter <> 0)
+    if ($counter > 0)
     {
         $query = $db->prepare("
             SELECT * 
-            FROM friends 
-            WHERE PrincipalID = ?
-            AND Friend = ?
-            AND Offered = 0
+            FROM $tbmodu 
+            WHERE user_uuid = ?
+            AND visible = ?
+            AND friends = ?
         ");
 
-        $query->bindValue(1, $_SESSION['useruuid'], PDO::PARAM_STR);
-        $query->bindValue(2, $user_uuid, PDO::PARAM_STR);
+        $query->bindValue(1, $user_uuid, PDO::PARAM_STR);
+        $query->bindValue(2, "yes", PDO::PARAM_STR);
+        $query->bindValue(3, "yes", PDO::PARAM_STR);
         $query->execute();
+        
+        $counter = $query->rowCount();
+        $query->closeCursor();
+        $db = NULL;
+        return $counter;
+    }
+    
+    else
+    {
+        $query->closeCursor();
+        $db = NULL;
+        return $counter;
+    }
+}
+
+function get_region_name($db, $region_uuid)
+{
+    $sql = $db->prepare("
+        SELECT regionName
+        FROM regions
+        WHERE uuid = '".$region_uuid."'
+        ORDER BY regionName
+    ");
+
+    $sql->execute();
+
+    if ($sql->rowCount() > 0)
+    {
+        while ($regions = $sql->fetch(PDO::FETCH_ASSOC))
+        {
+            $sql->closeCursor();
+            $db = NULL;
+            return $regions['regionName'];
+        }
     }
 
-    $query->closeCursor();
+    $sql->closeCursor();
     $db = NULL;
-    return $counter;
+    return "Region name no found ...";
+}
+
+function get_user_name($db, $user_uuid)
+{
+    $sql = $db->prepare("
+        SELECT FirstName, LastName
+        FROM useraccounts
+        WHERE PrincipalID = '".$user_uuid."'
+    ");
+
+    $sql->execute();           
+
+    if ($sql->rowCount() > 0)
+    {
+        while ($rows = $sql->fetch(PDO::FETCH_ASSOC))
+        {
+            $firstname = $rows['FirstName'];
+            $lastname = $rows['LastName'];
+
+            if (!empty($firstname) && !empty($lastname))
+            $username = $firstname.' '.$lastname;
+            else $username = 'Username Missing';
+            
+            $sql->closeCursor();
+            $db = NULL;
+            return $username;
+        }
+    }
+
+    $sql->closeCursor();
+    $db = NULL;
+    return "User name no found ...";
+}
+
+function get_this_user($i, $username, $LastSeen, $regionName, $robustHOST, $robustPORT, $options)
+{
+    $region_name = $options[0];
+    $last_seen = $options[1];
+    $tp_local = $options[2];
+    $tp_hg = $options[3];
+    $tp_hgv3 = $options[4];
+    $tp_hop = $options[5];
+    $tp_hide = $options[6];
+
+    echo '<tr>';
+    echo '<td><span class="badge">'.$i.'</span></td>';
+    echo '<td><span class="glyphicon glyphicon-user"></span> '.$username.'</td>';
+
+    if ($region_name === TRUE) echo '<td>'.$regionName.'</td>';
+    if ($last_seen === TRUE) echo '<td>'.$LastSeen.'</td>';
+    
+    if ($tp_hide === FALSE)
+    {
+        echo '<td class="text-right">';
+
+        if ($tp_local === TRUE) 
+        {
+            echo '<a class="btn btn-primary btn-xs" href="secondlife://'.$regionName.'/128/128/128">';
+            echo '<i class="glyphicon glyphicon-plane"></i> Local</a> ';
+        }
+
+        if ($tp_hg === TRUE) {
+            echo '<a class="btn btn-info btn-xs" href="secondlife://'.$robustHOST.':'.$robustPORT.'/'.$regionName.'/128/128/128">';
+            echo '<i class="glyphicon glyphicon-plane"></i> HG</a> ';
+        }
+
+        if ($tp_hgv3 === TRUE) {
+            echo '<a class="btn btn-warning btn-xs" href="secondlife://http|!!'.$robustHOST.'|'.$robustPORT.'+'.$regionName.'">';
+            echo '<i class="glyphicon glyphicon-plane"></i> HG V3</a> ';
+        }
+
+        if ($tp_hop === TRUE) {
+            echo '<a class="btn btn-danger btn-xs" href="hop://'.$robustHOST.':'.$robustPORT.'/'.$regionName.'/128/128/128">';
+            echo '<i class="glyphicon glyphicon-plane"></i> Hop</a> ';
+        }
+
+        echo '</td>';
+    }
+    echo '</tr>';
 }
 
 ?>

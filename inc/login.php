@@ -52,8 +52,8 @@ if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['passw
 
                     if ($passwordHash <> "")
                     {
-                        $passwordHash   = md5(md5($password).":".$passwordSalt);
-                        $md5Password    = $passwordHash;
+                        $md5Password   = md5(md5($password).":".$passwordSalt);
+                        // $md5Password    = $passwordHash;
 
                         if ($passwordHash == $md5Password)
                         {
