@@ -43,7 +43,7 @@ function set_visibility($db, $tbmodu, $user_uuid, $visible)
             ");
 
             $sql->bindValue(':user_uuid', $user_uuid, PDO::PARAM_STR);
-            $sql->bindValue(':visible', $visible, PDO::PARAM_INT);
+            $sql->bindValue(':visible', $visible, PDO::PARAM_STR);
 
             $sql->execute();
             $sql->closeCursor();
@@ -77,7 +77,7 @@ function set_visibility($db, $tbmodu, $user_uuid, $visible)
             ");
 
             $sql->bindValue(':user_uuid', $user_uuid, PDO::PARAM_STR);
-            $sql->bindValue(':visible', $visible, PDO::PARAM_INT);
+            $sql->bindValue(':visible', $visible, PDO::PARAM_STR);
 
             $sql->execute();
             $sql->closeCursor();
